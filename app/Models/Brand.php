@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 
 class Brand extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
         'name',
