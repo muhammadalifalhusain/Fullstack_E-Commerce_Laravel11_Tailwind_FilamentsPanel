@@ -11,6 +11,7 @@ use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Filters\SelectFilter;
@@ -205,8 +206,8 @@ class ProductTransactionResource extends Resource
                     ->boolean()
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->trueIcon('herocion-o-check-circle')
-                    ->falseIcon('herocion-o-x-circle')
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
                     ->label('Terverifikasi'),
             ])
             ->filters([
@@ -217,6 +218,25 @@ class ProductTransactionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
+
+                Tables\Actions\Action::make('approve')
+                    ->label('Approve')
+                    ->action(function(ProductTransaction $record){
+                        
+                        $record->is_paid = true;
+                        $record->save();
+                        
+                        Notification::make()
+                            ->title('Pesanan Diterima')
+                            ->success()
+                            ->body('Pesanan Berhasil di Terima')
+                            ->send();
+                    })
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->visible(fn (ProductTransaction $record) => !$record->is_paid),
+                
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

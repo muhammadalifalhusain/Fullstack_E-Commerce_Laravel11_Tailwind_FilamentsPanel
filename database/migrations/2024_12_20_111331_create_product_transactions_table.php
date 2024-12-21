@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('address');
             $table->unsignedBigInteger('quantity');
             $table->unsignedBigInteger('sub_total_amount');
-            $table->unsignedBigInteger('grand_total_amount');
+            $table->unsignedBigInteger('grand_total_amount')->default(0);
             $table->unsignedBigInteger('discount_amount');
             $table->boolean('is_paid');
             $table->foreignId('shoe_id')->constrained()->cascadeOnDelete();
