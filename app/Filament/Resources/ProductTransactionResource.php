@@ -13,6 +13,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -209,6 +210,9 @@ class ProductTransactionResource extends Resource
                     ->label('Terverifikasi'),
             ])
             ->filters([
+                SelectFilter::make('shoe_id')
+                ->label('shoe')
+                    ->relationship('shoe', 'name'),
                 //
             ])
             ->actions([
