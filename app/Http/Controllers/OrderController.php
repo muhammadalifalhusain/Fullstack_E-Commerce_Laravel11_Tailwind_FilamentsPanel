@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderRequest;
 use App\Service\OrderService;
 use App\Models\Shoe;
+use App\Http\Requests\StoreCustomerDataRequest;
+use App\Http\Requests\StorePaymentRequest;
+use App\Models\ProductTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Queue\Jobs\RedisJob;
 
 class OrderController extends Controller
 {
@@ -22,5 +26,48 @@ class OrderController extends Controller
         $this->orderService->beginOrder($validated);
 
         return redirect()->route('front.booking', $shoe->slug);
+    }
+
+    public function booking()
+    {
+        $data = $this->orderService->getOrderDetails();
+        return view('order.order', $data);
+    }
+
+    public function customerData()
+    {
+        $data = $this->orderService->getOrderDetails();
+        return view('order.customer_data', $data);    
+    }
+
+    public function saveCustomerData(StoreCustomerDataRequest $request)
+    {
+        $validated = $request->validated();
+        $this->orderService->updateCustomerData($validated);
+
+        return redirect()->route('front.payment');
+    }
+
+    public function payment()
+    {
+        $data = $this->orderService->getOrderDetails();
+        return view('order.payment', $data);
+    }
+
+    public function paymentConfirm(StorePaymentRequest $request)
+    {
+        $validated = $request->validated();
+        $productTransactionId = $this->orderService->paymentConfirm($validated);
+
+        if($productTransactionId)
+        {
+            return redirect()->route('front.order_finished', $productTransactionId);
+        }
+        return redirect()->route('front.index')->withErrors(['error' => 'Pembayaran Gagal. Silahkan ulangi kembali']);
+    }
+
+    public function orderFinished(ProductTransaction $productTransaction)
+    {
+        dd($productTransaction);
     }
 }

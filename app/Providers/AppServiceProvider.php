@@ -26,6 +26,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(OrderRepositoryInterface::class, OrderRepository::class);
         
         $this->app->singleton(PromoCodeRepositoryInterface::class, PromoCodeRepository::class);
+
+        $this->app->singleton(\App\Services\FrontService::class, \App\Services\FrontService::class);
     }
 
     /**
