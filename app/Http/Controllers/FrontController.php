@@ -16,11 +16,26 @@ class FrontController extends Controller
         $this->frontService = $frontService;
     }
 
-    public function index()
-    {
-        $data = $this->frontService->getFrontPageData();
-        return view('front.index', $data);
-    }
+    public function index(Request $request)
+{
+    // Ngambil Input Form Input
+    $search = $request->input('search');
+
+    // Logic searcing berdasarkan nama atau kataegori
+    $shoes = Shoe::with('category')
+        ->when($search, function ($query) use ($search) {
+            $query->where('name', 'like', "%{$search}%")
+                  ->orWhereHas('category', function ($query) use ($search) {
+                      $query->where('name', 'like', "%{$search}%");
+                  });
+        })
+        ->get();
+
+    return view('front.index', [
+        'shoes' => $shoes,
+    ]);
+}
+
 
     public function details(Shoe $shoe)
     {
