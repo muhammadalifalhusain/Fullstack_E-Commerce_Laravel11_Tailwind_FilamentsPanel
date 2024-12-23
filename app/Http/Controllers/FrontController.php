@@ -47,4 +47,9 @@ class FrontController extends Controller
     public function category(Category $category){
         return view('front.category', compact('category'));
     }
+
+    public function contact()
+    {
+        return view('front.contact'); // Pastikan file contact.blade.php ada di resources/views/front
+    }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\FrontController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ContactController;
 
 Route::get('/', [FrontController::class, 'index'])->name('front.index');
 
@@ -21,3 +22,8 @@ Route::get('/order/payment', [OrderController::class, 'payment'])->name('front.p
 Route::post('/order/payment/confirm', [OrderController::class, 'paymentConfirm'])->name('front.payment_confirm');
 
 Route::get('/order/finished/{{productTransaction:id}}', [OrderController::class, 'orderFinished'])->name('front.order_finished');
+
+Route::get('/contact', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
+
+
