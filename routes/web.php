@@ -8,7 +8,7 @@ Route::get('/', [FrontController::class, 'index'])->name('front.index');
 
 Route::get('/browse/{{category:slug}}', [FrontController::class, 'category'])->name('front.category');
 
-Route::get('/details/{{shoe:slug}}', [FrontController::class, 'details'])->name('front.details');
+Route::get('/details/{shoe:slug}', [FrontController::class, 'details'])->name('front.details');
 
 Route::post('/order/begin/{{shoe:slug}}', [OrderController::class, 'saveOrder'])->name('front.save_order');
 
