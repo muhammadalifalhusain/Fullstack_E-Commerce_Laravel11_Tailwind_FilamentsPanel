@@ -1,7 +1,7 @@
 <div class="bg-gray-400 shadow-md">
     <nav class="container mx-auto p-4 flex justify-between items-center">
         <!-- Logo -->
-        <a href="{{ route('front.index') }}" class="text-black text-2xl font-semibold">ALHUSAIN Store</a>
+        <a href="{{ route('front.index') }}" class="text-black text-2xl font-semibold">DATAMINING Store</a>
         
         <!-- Menu -->
         <ul class="flex space-x-6">
