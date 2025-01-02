@@ -1,7 +1,7 @@
 # Menggunakan base image resmi PHP dengan Composer
 FROM php:8.2-fpm
 
-# Install dependencies untuk PHP dan Node.js
+# Install dependencies sistem dan ekstensi PHP
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -10,19 +10,29 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    libicu-dev \
+    && docker-php-ext-install \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    gd \
+    zip \
+    intl \
+    && docker-php-source delete \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
 COPY --from=composer:2.6 /usr/bin/composer /usr/bin/composer
 
-# Install Bun
-RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:$PATH"
+# Set environment variable to allow Composer as superuser
+ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project
+# Copy project files
 COPY . /var/www/html
 
 # Install dependencies aplikasi Laravel
@@ -31,8 +41,8 @@ RUN composer install --optimize-autoloader --no-dev
 # Set permissions untuk Laravel
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expose port untuk Laravel dan Vite
-EXPOSE 8000 5173
+# Expose port untuk Laravel
+EXPOSE 8000
 
-# Jalankan perintah default container
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=8000 & bun install && bun run dev"]
+# Jalankan aplikasi Laravel
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
