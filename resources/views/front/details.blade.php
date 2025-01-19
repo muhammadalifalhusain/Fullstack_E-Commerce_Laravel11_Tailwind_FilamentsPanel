@@ -32,8 +32,11 @@
     </div>
 
     <div class="mt-6 text-center">
-        <a href="{{ route('front.index') }}" class="inline-block bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition">Kembali</a>
+        <a href="{{ route('front.index') }}" class="inline-block bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-800 transition">Back</a>
+        <a href="{{ route('front.booking') }}" class="bg-teal-500 inline-block  text-white py-2 px-4 rounded-md hover:bg-gray-700 transition duration-300">Buy Now</a>
+            
     </div>
+    
 </div>
 
 {{-- rekomendasi --}}

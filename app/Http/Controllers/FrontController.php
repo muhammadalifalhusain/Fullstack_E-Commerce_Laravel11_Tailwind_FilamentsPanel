@@ -10,57 +10,56 @@ use Illuminate\Support\Facades\Http;
 
 class FrontController extends Controller
 {
-    private $ApiUrl = "http://127.0.0.1:5000/";
     protected $frontService;
+
     public function __construct(FrontService $frontService)
     {
         $this->frontService = $frontService;
     }
 
     public function index(Request $request)
-{
-    // Ngambil Input Form Input
-    $search = $request->input('search');
-    $api = $this->ApiUrl . 'top-shoes';
+    {
+        // Ngambil Input Form Input
+        $search = $request->input('search');
 
-    $response = Http::get($api);
-    $topShoes = $response->json()['top_shoes'];
-    // Logic searcing berdasarkan nama atau kataegori
-    $shoes = Shoe::with('category')
-        ->when($search, function ($query) use ($search) {
-            $query->where('name', 'like', "%{$search}%")
-                  ->orWhereHas('category', function ($query) use ($search) {
-                      $query->where('name', 'like', "%{$search}%");
-                  });
-        })
-        ->get();
+        // Ambil data sepatu dari database
+        $shoes = Shoe::with('category')
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                      ->orWhereHas('category', function ($query) use ($search) {
+                          $query->where('name', 'like', "%{$search}%");
+                      });
+            })
+            ->get();
 
-    return view('front.index', [
-        'shoes' => $shoes,
-        'topShoes' => $topShoes,
-    ]);
-}
+        // Ambil data sepatu populer dari database (gunakan model untuk filter ini)
+        $topShoes = Shoe::with('category')
+            ->where('is_popular', true) // Atau sesuaikan kondisi dengan data sepatu populer di database
+            ->orderBy('price', 'desc') // Atau sesuai dengan logika pengurutan yang diinginkan
+            ->take(10) // Ambil 10 sepatu terpopuler
+            ->get();
 
+        return view('front.index', [
+            'shoes' => $shoes,
+            'topShoes' => $topShoes,
+        ]);
+    }
 
     public function details(Shoe $shoe)
     {
-        // URL backend Flask untuk mendapatkan rekomendasi
-    $api = $this->ApiUrl . 'recommend';
+        // Ganti dengan logika rekomendasi berbasis database jika perlu
+        // Misalnya, bisa berdasarkan kategori yang sama atau berdasarkan popularitas
+        $recommendations = Shoe::with('category')
+            ->where('category_id', $shoe->category_id)
+            ->where('id', '!=', $shoe->id) // Jangan tampilkan sepatu yang sama
+            ->take(5)
+            ->get();
 
-    // Kirimkan request POST ke backend Flask dengan ID produk
-    $response = Http::post($api, [
-        'id' => $shoe->id, // Mengirimkan ID produk saat ini
-    ]);
-
-    // Ambil data rekomendasi dari respons Flask
-    $recommendations = $response->successful() 
-        ? $response->json()['recommendations'] 
-        : [];
-
-        return view('front.details', compact('shoe','recommendations'));
+        return view('front.details', compact('shoe', 'recommendations'));
     }
 
-    public function category(Category $category){
+    public function category(Category $category)
+    {
         return view('front.category', compact('category'));
     }
 

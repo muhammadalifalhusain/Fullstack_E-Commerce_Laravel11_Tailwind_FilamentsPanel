@@ -11,6 +11,7 @@ use App\Repositories\OrderRepository;
 use App\Repositories\PromoCodeRepository;
 use App\Repositories\ShoeRepository;
 use Illuminate\Support\ServiceProvider;
+use App\Service\OrderService;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(OrderService::class, function ($app) {
+            return new OrderService(
+                $app->make(PromoCodeRepositoryInterface::class),
+                $app->make(CategoryRepositoryInterface::class),
+                $app->make(OrderRepositoryInterface::class),
+                $app->make(ShoeRepositoryInterface::class)
+            );
+        });
         $this->app->singleton(CategoryRepositoryInterface::class, CategoryRepository::class);
         
         $this->app->singleton(ShoeRepositoryInterface::class, ShoeRepository::class);

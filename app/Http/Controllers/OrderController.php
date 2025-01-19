@@ -25,7 +25,7 @@ class OrderController extends Controller
         $validated['shoe_id'] = $shoe->id;
         $this->orderService->beginOrder($validated);
 
-        return redirect()->route('front.booking', $shoe->slug);
+        return redirect()->route('front.booking');
     }
 
     public function booking()
@@ -68,6 +68,7 @@ class OrderController extends Controller
 
     public function orderFinished(ProductTransaction $productTransaction)
     {
-        dd($productTransaction);
+        return view('order.finished', compact('productTransaction'));
     }
+    
 }
