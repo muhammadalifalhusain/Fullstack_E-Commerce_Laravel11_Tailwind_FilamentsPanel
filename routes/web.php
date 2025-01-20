@@ -13,7 +13,9 @@ Route::get('/details/{shoe:slug}', [FrontController::class, 'details'])->name('f
 
 Route::post('/order/begin/{{shoe:slug}}', [OrderController::class, 'saveOrder'])->name('front.save_order');
 
-Route::get('/order/booking/', [OrderController::class, 'booking'])->name('front.booking');
+// Rute untuk memulai pemesanan dari tombol Buy Now
+Route::post('/order/buy-now/{shoe:slug}', [OrderController::class, 'buyNow'])->name('front.buy_now');
+
 
 Route::get('/order/booking/customer-data', [OrderController::class, 'customerData'])->name('front.customer_data');
 Route::post('/order/booking/customer-data/save', [OrderController::class, 'saveCustomerData'])->name('front.save_customer_data');

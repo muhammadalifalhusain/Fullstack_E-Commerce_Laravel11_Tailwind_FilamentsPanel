@@ -70,5 +70,22 @@ class OrderController extends Controller
     {
         return view('order.finished', compact('productTransaction'));
     }
+
+    public function buyNow(Request $request, Shoe $shoe)
+{
+    // Menyimpan informasi pesanan awal
+    $orderData = [
+        'shoe_id' => $shoe->id,
+        'shoe_size' => $request->input('shoe_size', null), // Pastikan ada input ukuran
+        'quantity' => $request->input('quantity', 1), // Default quantity = 1
+    ];
+
+    // Simpan data ke session
+    $this->orderService->beginOrder($orderData);
+
+    // Redirect ke halaman detail order
+    return redirect()->route('front.booking');
+}
+
     
 }
